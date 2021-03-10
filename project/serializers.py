@@ -10,5 +10,6 @@ class ProjectSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = self.context['request'].user
         project = Project(**validated_data)
+        project.user = user
         project.save()
         return project
