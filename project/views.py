@@ -113,7 +113,7 @@ class ProjectViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
         """
         projects = Project.objects.annotate(
             balance=Sum(F('management__budget')-F('management__spent'))
-        ).filter(balance__gt=0)
+        ).filter(balance__gt=0, status=2)
         data = self.get_serializer(projects, many=True).data
         return Response(data)
 
