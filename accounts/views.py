@@ -5,6 +5,9 @@ from .serializers import UserSerializer
 
 
 class UserViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+    """
+    Mixin for create user
+    Is not required authentication
+    """
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
-

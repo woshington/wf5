@@ -4,6 +4,7 @@ from django.db.models import Sum
 
 # Create your models here.
 
+
 class Project(models.Model):
     CHOICES_STATUS = (
         (1, 'Novo'),
@@ -30,11 +31,12 @@ class Project(models.Model):
         "data cancelamento", null=True, db_column='dtCancelamento'
     )
     status = models.PositiveSmallIntegerField(
-        "status", null=False, choices=CHOICES_STATUS, 
+        "status", null=False, choices=CHOICES_STATUS,
         db_column="flStatus", default=1
     )
     user = models.ForeignKey(
-        User, verbose_name="usuario", db_column="nuUsuario", on_delete=models.CASCADE
+        User, verbose_name="usuario", db_column="nuUsuario",
+        on_delete=models.CASCADE
     )
 
     class Meta:
@@ -44,25 +46,30 @@ class Project(models.Model):
 
     @property
     def balanced(self):
-        if self.status == 1:
+        """
+        Return: available budget or zero when status is not approved
+        """
+        if self.status != 2:
             return 0
         management = self.management_set.aggregate(
             budget_value=Sum('budget'), spent_value=Sum('spent')
-        )           
-        return management['budget_value'] - management['spent_value']        
+        )
+        return management['budget_value'] - management['spent_value']
+
 
 class Management(models.Model):
     id = models.AutoField(primary_key=True, db_column='idGerenciamento')
     budget = models.DecimalField(
-        "orçamento", null=False, max_digits=9, decimal_places=2, 
+        "orçamento", null=False, max_digits=9, decimal_places=2,
         db_column="vlOrcamento"
     )
     spent = models.DecimalField(
-        "Gasto", null=False, max_digits=9, decimal_places=2, 
+        "Gasto", null=False, max_digits=9, decimal_places=2,
         db_column="vlGasto"
     )
     project = models.ForeignKey(
-        Project, verbose_name="projeto", db_column="nuProjeto", on_delete=models.CASCADE
+        Project, verbose_name="projeto", db_column="nuProjeto",
+        on_delete=models.CASCADE
     )
 
     class Meta:
