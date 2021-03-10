@@ -18,14 +18,16 @@ class Project(models.Model):
         'criado em', auto_now_add=True
     )
     approval_date = models.DateTimeField(
-        "data aprovação", null=True, db_column='nmProjeto'
+        "data aprovação", null=True, db_column='dtAprovacao'
     )
-    cancellation_date = models.DateTimeField("data aprovação", null=True)
+    cancellation_date = models.DateTimeField(
+        "data cancelamento", null=True, db_column='dtCancelamento'
+    )
     status = models.PositiveSmallIntegerField(
         "status", null=False, db_column="flStatus"
     )
     user = models.ForeignKey(
-        User, verbose_name="usuario", db_column="nuUsuario"
+        User, verbose_name="usuario", db_column="nuUsuario", on_delete=models.CASCADE
     )
 
     class Meta:
@@ -41,11 +43,11 @@ class Management(models.Model):
         db_column="vlOrcamento"
     )
     spent = models.DecimalField(
-        "Gasto", null=False, max_digits=9, decimal_places=2, null=True,
+        "Gasto", null=False, max_digits=9, decimal_places=2, 
         db_column="vlGasto"
     )
     project = models.ForeignKey(
-        Project, verbose_name="projeto", db_column="nuProjeto"
+        Project, verbose_name="projeto", db_column="nuProjeto", on_delete=models.CASCADE
     )
 
     class Meta:

@@ -37,6 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # libs
+    'rest_framework',
+    'django_extensions',
+    # apps
     'accounts.apps.AccountsConfig',
     'project.apps.ProjectConfig',
 ]
@@ -49,6 +53,15 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+# Setando o algoritmo padrão para hash de senha
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.CryptPasswordHasher',
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+    'django.contrib.auth.hashers.Argon2PasswordHasher',
 ]
 
 ROOT_URLCONF = 'wf5.urls'
@@ -123,3 +136,15 @@ STATIC_URL = '/static/'
 
 
 AUTH_USER_MODEL = 'accounts.User'
+
+# Setando configuração padrão para o framework django rest
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',    
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    # 'DEFAULT_AUTHENTICATION_CLASSES': (
+    #     'rest_framework.authentication.BasicAuthentication',
+    #     'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+    # ),
+}
