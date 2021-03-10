@@ -1,7 +1,7 @@
 from project.models import Project, Management
 from rest_framework import mixins, viewsets, generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from .serializers import ProjectSerializer, ManagementSerializer, ApproveSerializer
+from .serializers import ProjectSerializer, ManagementSerializer, CodeProjectSerializer
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from datetime import datetime
@@ -21,8 +21,8 @@ class ProjectViewSet(mixins.ListModelMixin,
         methods=['post'],
         detail=False,
         url_path='aprovar-projeto',
-        permission_classes=[AllowAny],
-        serializer_class=ApproveSerializer
+        permission_classes=[IsAuthenticated],
+        serializer_class=CodeProjectSerializer
     )
     def approve(self, request):
         serializer = self.get_serializer(data=self.request.data)
@@ -36,6 +36,34 @@ class ProjectViewSet(mixins.ListModelMixin,
             project.save()
             response = {
                'message': 'Projeto aprovado com sucesso!'
+            }
+        except Project.DoesNotExist:
+            context = {
+                'message': 'Projeto não encontrado!'
+            }
+            return Response(context, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response(response, status=status.HTTP_200_OK)
+    @action(
+        methods=['post'],
+        detail=False,
+        url_path='cancelar-projeto',
+        permission_classes=[IsAuthenticated],
+        serializer_class=CodeProjectSerializer
+    )
+    def cancel(self, request):
+        serializer = self.get_serializer(data=self.request.data)
+        serializer.is_valid(raise_exception=True)
+        code = serializer.data.get('code')
+
+        try:
+            print(" -------", code.upper())
+            project = Project.objects.get(code=code.upper(), status__in=[1,2])
+            project.status = 3
+            project.cancellation_date = datetime.now()
+            project.save()
+            response = {
+               'message': 'Projeto cancelado com sucesso!'
             }
         except Project.DoesNotExist:
             context = {
