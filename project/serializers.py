@@ -5,4 +5,10 @@ from rest_framework import serializers
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
-        fields = "__all__"
+        fields = ["code", "name", "description"]
+    
+    def create(self, validated_data):
+        user = self.context['request'].user
+        project = Project(**validated_data)
+        project.save()
+        return project

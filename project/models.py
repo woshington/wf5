@@ -4,6 +4,11 @@ from accounts.models import User
 # Create your models here.
 
 class Project(models.Model):
+    CHOICES_STATUS = (
+        (1, 'Novo'),
+        (2, 'Aprovado'),
+        (3, 'Cancelado'),
+    )
     id = models.AutoField(primary_key=True, db_column='idProjeto')
     code = models.CharField(
         "codigo", max_length=20, null=False, db_column='cdProjeto'
@@ -24,7 +29,8 @@ class Project(models.Model):
         "data cancelamento", null=True, db_column='dtCancelamento'
     )
     status = models.PositiveSmallIntegerField(
-        "status", null=False, db_column="flStatus"
+        "status", null=False, choices=CHOICES_STATUS, 
+        db_column="flStatus", default=1
     )
     user = models.ForeignKey(
         User, verbose_name="usuario", db_column="nuUsuario", on_delete=models.CASCADE
