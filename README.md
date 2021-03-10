@@ -31,7 +31,20 @@
   <li>Entre na pasta do projeto - cd pasta_do_projeto </li>
   <li>Ativar o ambiente virtual - source /caminho_do_ambiente/bin/activate</li>
   <li>Executar a instalação das dependências - pip install -r requirements.txt </li>
+  <li>Atualize o schema de banco de dados - ./manage.py migrate </li>
   <li>Executar a aplicação - ./manage.py runserver</li>
 </ol>
 
-## Links de acesso
+## Links para as principais funcionalidades
+<ul>
+  <li>Cadastrar usuário - POST /accounts/users/</li>
+  <li>Gerar Token - POST /api-token-auth/ </li>
+  <li>Cadastrar Projeto - POST /projects/project/</li>
+  <li>Listar Projetos - GET /projects/project/</li>
+  <li>Listar Projetos com saldo positivo - GET /projects/project/positive_balance/</li>
+  <li>Aprovar Projeto - POST /projects/project/approval/</li>
+  <li>Cancelar Projeto - POST /projects/project/cancel/</li>
+  <li>Adicionar dados de gerenciamento - POST /projects/management/</li>
+  <li>Listar dados de gerenciamento - GET /projects/management/</li>
+  <li>Lista completa de urls disponíveis - GET /docs/ (visto no navegador)</li>
+</ul>
