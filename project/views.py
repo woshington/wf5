@@ -30,8 +30,8 @@ class ProjectViewSet(mixins.ListModelMixin,
         code = serializer.data.get('code')
 
         try:
-            project = Project.objects.get(code=code, status=1)
-            project.status == 2
+            project = Project.objects.get(code=code.upper(), status=1)
+            project.status = 2
             project.approval_date = datetime.now()
             project.save()
             response = {
