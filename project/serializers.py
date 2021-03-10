@@ -3,9 +3,18 @@ from rest_framework import serializers
 from datetime import datetime
 
 class ProjectSerializer(serializers.ModelSerializer):
+    status = serializers.SerializerMethodField()
+    balance = serializers.SerializerMethodField()
+    
     class Meta:
         model = Project
-        fields = ["code", "name", "description"]
+        exclude = ['user']
+    
+    def get_status(self, obj):
+        return obj.get_status_display()
+    
+    def get_balance(self, obj):
+        return obj.balanced
     
     def validate(self, data):
         code = data['code']

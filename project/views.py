@@ -1,10 +1,13 @@
 from project.models import Project, Management
 from rest_framework import mixins, viewsets, generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from .serializers import ProjectSerializer, ManagementSerializer, CodeProjectSerializer
+from .serializers import (
+    ProjectSerializer, ManagementSerializer, CodeProjectSerializer
+)
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from datetime import datetime
+from django.db.models import Sum, F
 
 
 class ProjectViewSet(mixins.ListModelMixin,
@@ -57,7 +60,6 @@ class ProjectViewSet(mixins.ListModelMixin,
         code = serializer.data.get('code')
 
         try:
-            print(" -------", code.upper())
             project = Project.objects.get(code=code.upper(), status__in=[1,2])
             project.status = 3
             project.cancellation_date = datetime.now()
@@ -72,6 +74,21 @@ class ProjectViewSet(mixins.ListModelMixin,
             return Response(context, status=status.HTTP_400_BAD_REQUEST)
         
         return Response(response, status=status.HTTP_200_OK)
+
+    @action(
+        methods=['get'],
+        detail=False,
+        url_path='positive_balance',
+        permission_classes=[IsAuthenticated],
+        serializer_class = ProjectSerializer
+    )
+
+    def positive_balance(self, request, *args, **kwargs):
+        projects = Project.objects.annotate(
+            balance=Sum(F('management__budget')-F('management__spent'))
+        ).filter(balance__gt=0)
+        data = self.get_serializer(projects, many=True).data
+        return Response(data)
 
 class ManagementViewSet(mixins.CreateModelMixin,
                   viewsets.GenericViewSet):

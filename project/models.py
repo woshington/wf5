@@ -1,5 +1,6 @@
 from django.db import models
 from accounts.models import User
+from django.db.models import Sum
 
 # Create your models here.
 
@@ -41,6 +42,14 @@ class Project(models.Model):
         verbose_name_plural = "Projetos"
         db_table = "eptfProjeto"
 
+    @property
+    def balanced(self):
+        if self.status == 1:
+            return 0
+        management = self.management_set.aggregate(
+            budget_value=Sum('budget'), spent_value=Sum('spent')
+        )           
+        return management['budget_value'] - management['spent_value']        
 
 class Management(models.Model):
     id = models.AutoField(primary_key=True, db_column='idGerenciamento')
