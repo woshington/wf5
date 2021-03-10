@@ -43,6 +43,9 @@ class Project(models.Model):
         verbose_name = "Projeto"
         verbose_name_plural = "Projetos"
         db_table = "eptfProjeto"
+    
+    def __str__(self):
+        return self.name
 
     @property
     def balanced(self):

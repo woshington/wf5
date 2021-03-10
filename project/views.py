@@ -7,7 +7,8 @@ from rest_framework.response import Response
 
 from project.models import Project, Management
 from .serializers import (
-    ProjectSerializer, ManagementSerializer, CodeProjectSerializer
+    ProjectSerializer, ManagementSerializer, CodeProjectSerializer,
+    ApprovalSerializer
 )
 
 
@@ -27,26 +28,33 @@ class ProjectViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
     @action(
         methods=['post'],
         detail=False,
-        url_path='aprovar-projeto',
+        url_path='approval',
         permission_classes=[IsAuthenticated],
-        serializer_class=CodeProjectSerializer
+        serializer_class=ApprovalSerializer
     )
     def approve(self, request):
         """
         Method to approve project
-        in the request is necessary to send the project code
+        in the request is necessary to send the project code, the budget
+        and the spent.
         if the code is from a new project, change the status to approved
         and approval_date to current data
         """
         serializer = self.get_serializer(data=self.request.data)
         serializer.is_valid(raise_exception=True)
         code = serializer.data.get('code')
+        data_management = {
+            'budget': serializer.data.get('budget'),
+            'spent': serializer.data.get('spent')
+        } 
 
         try:
             project = Project.objects.get(code=code.upper(), status=1)
             project.status = 2
             project.approval_date = datetime.now()
             project.save()
+            data_management['project'] = project
+            Management.objects.create(**data_management)
             response = {
                'message': 'Projeto aprovado com sucesso!'
             }
@@ -61,7 +69,7 @@ class ProjectViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
     @action(
         methods=['post'],
         detail=False,
-        url_path='cancelar-projeto',
+        url_path='cancel',
         permission_classes=[IsAuthenticated],
         serializer_class=CodeProjectSerializer
     )
