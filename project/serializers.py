@@ -7,10 +7,17 @@ class ProjectSerializer(serializers.ModelSerializer):
         model = Project
         fields = ["code", "name", "description"]
     
+    def validate(self, data):
+        code = data['code']
+        if not code.isalnum():
+            raise serializers.ValidationError("Código aceita apenas letras e números!")
+        return data
+
     def create(self, validated_data):
         user = self.context['request'].user
         project = Project(**validated_data)
         project.user = user
+        project.code = project.code.upper()
         project.save()
         return project
 
@@ -27,3 +34,6 @@ class ManagementSerializer(serializers.ModelSerializer):
             project.approval_date = datetime.now()
             project.save()
         return management
+
+class ApproveSerializer(serializers.Serializer):
+    code = serializers.CharField(required=True, max_length=20)

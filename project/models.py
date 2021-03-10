@@ -11,7 +11,7 @@ class Project(models.Model):
     )
     id = models.AutoField(primary_key=True, db_column='idProjeto')
     code = models.CharField(
-        "codigo", max_length=20, null=False, db_column='cdProjeto'
+        "codigo", max_length=20, null=False, unique=True, db_column='cdProjeto'
     )
     name = models.CharField(
         "nome", max_length=80, null=False, db_column='nmProjeto'
