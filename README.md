@@ -23,3 +23,15 @@
 <p align="justity">
    <strong>value:</strong> Token "token_gerado" (sem aspas)  
 </p>
+
+## Executando do Projeto
+<ol>
+  <li>Clonar o repositório</li>
+  <li>Criar o ambiente virtual - virtualenv [nome_do_ambiente]</li>
+  <li>Entre na pasta do projeto - cd pasta_do_projeto </li>
+  <li>Ativar o ambiente virtual - source /caminho_do_ambiente/bin/activate</li>
+  <li>Executar a instalação das dependências - pip install -r requirements.txt </li>
+  <li>Executar a aplicação - ./manage.py runserver</li>
+</ol>
+
+## Links de acesso
