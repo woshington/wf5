@@ -12,6 +12,9 @@ from django.db.models import Sum, F
 
 class ProjectViewSet(mixins.ListModelMixin,
                   mixins.CreateModelMixin,
+                  mixins.RetrieveModelMixin,
+                  mixins.UpdateModelMixin,
+                  mixins.DestroyModelMixin,
                   viewsets.GenericViewSet):
     serializer_class = ProjectSerializer
     permission_classes = [IsAuthenticated]
@@ -90,8 +93,7 @@ class ProjectViewSet(mixins.ListModelMixin,
         data = self.get_serializer(projects, many=True).data
         return Response(data)
 
-class ManagementViewSet(mixins.CreateModelMixin,
-                  viewsets.GenericViewSet):
+class ManagementViewSet(viewsets.ModelViewSet):
     serializer_class = ManagementSerializer
     permission_classes = [IsAuthenticated]
     queryset = Management.objects.all()
