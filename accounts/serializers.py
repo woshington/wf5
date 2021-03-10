@@ -34,3 +34,10 @@ class UserSerializer(serializers.ModelSerializer):
         """
         user = User.objects.create_user(**validated_data)
         return user
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ["name", "email", "profile"]
+        read_only_fields = ['email']

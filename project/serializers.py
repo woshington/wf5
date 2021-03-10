@@ -19,7 +19,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     def get_balance(self, obj):
         return obj.balanced
-    
+
     def get_user(self, obj):
         return obj.user.name
 
@@ -29,11 +29,12 @@ class ProjectSerializer(serializers.ModelSerializer):
         Return: exception if characters is not alphanumeric or
         data of project if characters is valid
         """
-        code = data['code']
-        if not code.isalnum():
-            raise serializers.ValidationError(
-                "Permitido apenas letras e números!"
-            )
+        if 'code' in data:
+            code = data['code']
+            if not code.isalnum():
+                raise serializers.ValidationError(
+                    "Permitido apenas letras e números!"
+                )
         return data
 
     def create(self, validated_data):
@@ -49,13 +50,14 @@ class ProjectSerializer(serializers.ModelSerializer):
         project.code = project.code.upper()
         project.save()
         return project
-    
+
     def get_management(self, obj):
         return ManagementSerializer(obj.management_set.all(), many=True).data
 
 
 class ManagementSerializer(serializers.ModelSerializer):
     project = serializers.CharField(required=True, max_length=20)
+
     class Meta:
         model = Management
         fields = "__all__"
@@ -88,15 +90,27 @@ class ManagementSerializer(serializers.ModelSerializer):
             project.save()
 
         return management
-    
+
     def update(self, instance, validated_data):
+        """
+        Override method for update management
+        Get project with associated code and to link with instance
+        """
         validated_data['project'] = Project.objects.get(
             code=validated_data['project'].upper()
         )
-        instance = super(ManagementSerializer,self).update(instance, validated_data)
+
+        instance = super(ManagementSerializer, self).update(
+            instance, validated_data
+        )
         return instance
 
+
 class ApprovalSerializer(serializers.ModelSerializer):
+    """
+    Implentation of serializar to approval project
+    Fields: code of project, budget and spent of management
+    """
     code = serializers.CharField(required=True, max_length=20)
     budget = serializers.DecimalField(
         max_digits=9, decimal_places=2, required=True,
@@ -106,12 +120,15 @@ class ApprovalSerializer(serializers.ModelSerializer):
         max_digits=9, decimal_places=2, required=True,
         min_value=0
     )
-    
+
     class Meta:
         model = Project
         fields = ['code', 'budget', 'spent']
 
     def validate(self, data):
+        """
+        Validation of code of project
+        """
         project = data['code'].upper()
 
         if not Project.objects.filter(
@@ -122,6 +139,6 @@ class ApprovalSerializer(serializers.ModelSerializer):
 
         return data
 
-    
+
 class CodeProjectSerializer(serializers.Serializer):
     code = serializers.CharField(required=True, max_length=20)

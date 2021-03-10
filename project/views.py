@@ -38,7 +38,8 @@ class ProjectViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
         in the request is necessary to send the project code, the budget
         and the spent.
         if the code is from a new project, change the status to approved
-        and approval_date to current data
+        and approval_date to current data. Futhermore, add record in
+        Management Model
         """
         serializer = self.get_serializer(data=self.request.data)
         serializer.is_valid(raise_exception=True)
@@ -46,7 +47,7 @@ class ProjectViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
         data_management = {
             'budget': serializer.data.get('budget'),
             'spent': serializer.data.get('spent')
-        } 
+        }
 
         try:
             project = Project.objects.get(code=code.upper(), status=1)
@@ -109,7 +110,7 @@ class ProjectViewSet(mixins.ListModelMixin, mixins.CreateModelMixin,
     )
     def positive_balance(self, request, *args, **kwargs):
         """
-        Return: data of projects that positive balance
+        Return: data of projects that positive balance and status == 2
         """
         projects = Project.objects.annotate(
             balance=Sum(F('management__budget')-F('management__spent'))
